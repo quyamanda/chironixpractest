@@ -1,0 +1,10 @@
+<launch>
+  <!-- Arguments -->
+  <!--<arg name="map_file" default="$(find turtlebot3_navigation)/maps/map.yaml"/> -->
+  <arg name="csv_file" default="test.csv"/>
+
+  <!-- Map server -->
+  <node pkg="test" name="navigate" type="mv2goal.py" args="$(arg csv_file)"/>
+  <node pkg="test" name="recordpose" type="recordpose.py" args="$(arg csv_file)"/>
+
+</launch>
