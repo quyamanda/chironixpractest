@@ -1,9 +1,0 @@
-<launch>
-  <!-- Arguments -->
-  <arg name="csv_file" default="test.csv"/>
-
-  <!-- Map server -->
-  <node pkg="test" name="navigate" type="mv2goal" args="$(arg csv_file)"/>
-  <node pkg="test" name="recordpose" type="recordpose" args="$(arg csv_file)"/>
-
-</launch>
