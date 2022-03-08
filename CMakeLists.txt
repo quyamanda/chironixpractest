@@ -10,12 +10,12 @@ project(test)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
-  std_msgs
+  actionlib
   geometry_msgs
   move_base_msgs
-  actionlib
-  tf2
   nav_msgs
+  std_msgs
+  tf2
 )
 
 ## System dependencies are found with CMake's conventions
@@ -218,7 +218,4 @@ target_link_libraries (cw ${catkin_LIBRARIES})
 add_executable(mv2goal src/task2/mv2goal.cpp)
 target_link_libraries (mv2goal ${catkin_LIBRARIES})
 
-#recordpose
-add_executable(recordpose src/task2/recordpose.cpp)
-target_link_libraries (recordpose ${catkin_LIBRARIES})
 

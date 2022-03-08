@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#open-loop control
+#takes one argument float non-negative-value-for-desired-counterclockwise-angular-rotation-in rad/s
 import sys
 import time
 import rospy
@@ -11,7 +11,7 @@ def clockwise():
     #initialize node
     rospy.init_node('clockwise', anonymous=True)
     #set loop rate
-    rate = rospy.Rate(50) # Hz
+    rate = rospy.Rate(50) #Hz
     
     # set values for cmd_vel message
     msg = Twist()
@@ -20,7 +20,7 @@ def clockwise():
     msg.linear.z = 0.0
     msg.angular.x = 0.0
     msg.angular.y = 0.0
-    msg.angular.z = float(sys.argv[1])
+    msg.angular.z = float(sys.argv[1]) # +ve z -> counterclockwise
     
     #keep publishing for 10s or Ctrl-C is pressed
     t0 = time.time()
