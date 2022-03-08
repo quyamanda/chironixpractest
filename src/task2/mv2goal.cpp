@@ -12,7 +12,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
-// using namespace std;
+
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 std::fstream csvfile;
 
