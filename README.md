@@ -1,2 +1,103 @@
 # chironixpractest
 robotics positions - entry level - practical test
+
+---Instructions---
+0.0 SETUP
+  0.1. Required software
+    (the specific versions that have been used for testing are shown in brackets, but code should work with fresh installation of ROS noetic)
+    Ubuntu 20.0.4
+    ROS noetic (1.15.14)
+    Gazebo multi-robot simulator, version 11 (11.9.0)
+    rviz (1.14.14)
+    $ sudo apt install python-is-python3
+    $ sudo apt-get update
+    $ sudo apt-get upgrade
+
+  0.2. Check/update ~/.bashrc includes the relevant lines at bottom of file
+    $ gedit ~/.bashrc
+    "
+    export SVGA_VGPU10=0 //for opening Gazebo in virtual machine
+    source /opt/ros/noetic/setup.bash
+    source <path-to-catkin-workspace-setup.bash> (e.g. /home/username/catkin_ws/devel/setup.bash)
+    export TURTLEBOT3_MODEL=waffle (select any model e.g. burger,waffle,waffle_pi)
+    "
+
+  0.3. Instructions will assume ROS catkin workspace created in user home directory (e.g. ~/catkin_ws)
+    http://wiki.ros.org/catkin/Tutorials/create_a_workspace#:~:text=If%20you%20installed%20catkin%20via%20apt-get%20for%20ROS,mkdir%20-p%20~%2Fcatkin_ws%2Fsrc%20%24%20cd%20~%2Fcatkin_ws%2F%20%24%20catkin_make
+
+  0.4. clone ChironixPracTest 'test' github repository into catkin_ws    
+    $ cd ~/catkin_ws/src/
+    $ git clone https://github.com/quyamanda/test.git -b main
+    $ cd ~/catkin_ws && catkin_make
+    ensure all python files are made executable
+      e.g. $ chmod +x -R ~/catkin_ws
+
+1.0 TASK1 Instructions, using husky-noetic
+  1.1. Install husky-noetic (0.6.2-1focal)
+    $ sudo apt-get install ros-noetic-husky-desktop
+    $ sudo apt-get install ros-noetic-husky-simulator
+    $ sudo apt-get install ros-noetic-husky-navigation
+
+  1.2 In three separate terminal windows:
+    *These instructions will now use "[T#]" to denote a command to run in which terminal window
+    [T1] $ roslaunch husky_gazebo husky_playpen.launch
+    [T2] $ roslaunch husky_viz view_robot.launch
+
+    open-loop command for angular rotation in rad/s
+      [T3] $ rosrun test cw <non-negative-value-for-desired-clockwise-angular-rotation-in rad/s>
+        e.g $ rosrun test cw 5
+      [T3] $ rosrun test ccw.py <non-negative-value-for-desired-counterclockwise-angular-rotation-in rad/s>
+        e.g. $ rosrun test ccw.py 5
+
+2.0 TASK2 Instructions, using turtlebot3 simulation
+*I could not get husky simulation to run slam or navigation nodes, so have implemented task2 using turtlebot3 instead
+https://emanual.robotis.com/docs/en/platform/turtlebot3/overview/
+
+  2.1. Install turtlebot3
+    $ cd ~/catkin_ws/src/
+    $ git clone https://github.com/ROBOTIS-GIT/turtlebot3_msgs.git -b noetic-devel
+    $ git clone  https://github.com/ROBOTIS-GIT/turtlebot3.git -b noetic-devel
+    $ cd ~/catkin_ws && catkin_make
+    After the correct compilation of the catkin_ws, you can download and install the simulation packages
+    $ cd ~/catkin_ws/src/
+    $ git clone https://github.com/ROBOTIS-GIT/turtlebot3_simulations.git
+    $ cd ~/catkin_ws && catkin_make
+
+  2.2. Run simulations
+    2.2.1. Launch simulation node (Gazebo)
+      https://emanual.robotis.com/docs/en/platform/turtlebot3/simulation/#gazebo-simulation
+      [T1] $ roslaunch turtlebot3_gazebo turtlebot3_house.launch
+      (This instruction uses 'house', but can work for any 2D environment, e.g. roslaunch turtlebot3_gazebo turtlebot3_world.launch)
+
+    2.2.2. (Optional) Run SLAM to generate laserscan map
+      https://emanual.robotis.com/docs/en/platform/turtlebot3/slam_simulation/
+      2.2.2.1. Run SLAM node
+        [T2] $ roslaunch turtlebot3_slam turtlebot3_slam.launch slam_methods:=gmapping
+      2.2.2.2. Run Teleoperation Node
+        [T3] $ roslaunch turtlebot3_teleop turtlebot3_teleop_key.launch
+      2.2.2.3.Save map
+        [T4] $ rosrun map_server map_saver -f <path-to-map e.g. ~/catkin_ws/src/test/src/task2/map>
+
+    2.2.3. Navigation
+      2.2.3.1. Required files:
+        - map.pgm file:
+          Can use the map generated in SLAM Step 2.2.2.3, or one of these:
+            house_complete.pgm
+            house_partial.pgm
+        - map.yaml file:
+          *Need to update this file with path to map.pgm:
+            Image: <path-to-map.pgm> Need to update filepath e.g. /home/username/catkin_ws/src/test/src/task2/house_complete.pgm
+      2.2.3.2. Run navigation simulation
+        2.2.3.2.1. Launch rviz with map
+          [T2] $ roslaunch turtlebot3_navigation turtlebot3_navigation.launch map_file:=<path-to-map.yaml>
+        2.2.3.2.2. Within rviz, use '2D Pose Estimate' to set initial pose, by comparing gazebo and rviz map
+        2.2.3.2.3. In mv2goal.csv
+          In 2nd row, Update goal pose values (x,y,yaw)
+          *I have not implemented code to clear previous coordinates data, user will need to manually:
+            - delete previous data
+            - or create new csv file with just the first two lines
+        2.2.3.2.4. Run navigation node
+          *Have not implemented non-blocking notification to check when navigation is complete/successful while recording pose simultaneously;
+            user must end node/press ctrl-c for csv file to be closed+saved by program
+          [T3] $ rosrun test mv2goal <path-to-mv2goal.csv>
+          [T3] $ rosrun test mv2goal.py <path-to-mv2goal.csv>
