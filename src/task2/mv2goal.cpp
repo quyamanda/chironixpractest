@@ -17,10 +17,10 @@ typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseCl
 std::fstream csvfile;
 
 void getgoal(std::string fname, float *goalx, float *goaly, float *goalyaw){ 
-	std::vector<std::vector<std::string>> content;
-	std::vector<std::string> row;
-	std::string line, word; 
-	std::fstream file;
+  std::vector<std::vector<std::string>> content;
+  std::vector<std::string> row;
+  std::string line, word; 
+  std::fstream file;
   file.open(fname, std::fstream::in);
 	if(file.is_open()){
 		while(std::getline(file, line)){
@@ -50,17 +50,17 @@ void callback_pose(const geometry_msgs::PoseWithCovarianceStamped msg){
   float curr_x,curr_y;
   double curr_roll,curr_pitch,curr_yaw;
   curr_x = msg.pose.pose.position.x;
-	curr_y = msg.pose.pose.position.y;
-	//formulate a quaternion as a list
-	geometry_msgs::Quaternion quat_msg;
+  curr_y = msg.pose.pose.position.y;
+  //formulate a quaternion as a list
+  geometry_msgs::Quaternion quat_msg;
   quat_msg = msg.pose.pose.orientation;
   tf2::Quaternion quat_tf;
   tf2::convert(quat_msg , quat_tf);
   tf2::Matrix3x3 rpy(quat_tf);
-	//convert the quaternion to roll-pitch-yaw
-	rpy.getRPY(curr_roll, curr_pitch, curr_yaw);
-	curr_yaw = curr_yaw*180/M_PI; //convert radians to degrees
-	if (csvfile.is_open())
+  //convert the quaternion to roll-pitch-yaw
+  rpy.getRPY(curr_roll, curr_pitch, curr_yaw);
+  curr_yaw = curr_yaw*180/M_PI; //convert radians to degrees
+  if (csvfile.is_open())
     csvfile << getCurrTimeStr()+','+std::to_string(curr_x)+','+std::to_string(curr_y)+','+std::to_string(curr_yaw) << std::endl;
 }
 
