@@ -2,6 +2,7 @@
 robotics positions - entry level - practical test
 
 ---Instructions---
+*Please read instructions as raw/plain text (not rendered in git/browser) for indentation, etc.
 0.0 SETUP
   0.1. Required software
     (the specific versions that have been used for testing are shown in brackets, but code should work with fresh installation of ROS noetic)
